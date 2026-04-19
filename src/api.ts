@@ -1,69 +1,79 @@
 import axios from 'axios';
-import type { Note, NoteVersion } from './types';
+import type { AuthPayload, AuthResponse, Note, NoteVersion } from './types';
 
-const API_BASE_URL =
+const NOTES_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api/notes';
-const TENANT_HEADER_NAME = import.meta.env.VITE_TENANT_HEADER_NAME ?? 'X-Tenant-Id';
-const TENANT_STORAGE_KEY = 'noteapp_tenant_id';
+const AUTH_API_BASE_URL =
+  import.meta.env.VITE_AUTH_API_BASE_URL ?? 'http://localhost:8080/api/auth';
+const AUTH_TOKEN_STORAGE_KEY = 'noteapp_auth_token';
 
-const resolveTenantId = () => {
-  const envTenantId = import.meta.env.VITE_TENANT_ID?.trim();
-  if (envTenantId) {
-    return envTenantId;
-  }
-
-  const savedTenantId = window.localStorage.getItem(TENANT_STORAGE_KEY)?.trim();
-  if (savedTenantId) {
-    return savedTenantId;
-  }
-
-  const generatedTenantId = `tenant-${Math.random().toString(36).slice(2, 10)}`;
-  window.localStorage.setItem(TENANT_STORAGE_KEY, generatedTenantId);
-  return generatedTenantId;
+export const authStorage = {
+  getToken: () => window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY),
+  setToken: (token: string) => window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token),
+  clearToken: () => window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY),
 };
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
+const noteClient = axios.create({
+  baseURL: NOTES_API_BASE_URL,
 });
 
-api.interceptors.request.use((config) => {
+noteClient.interceptors.request.use((config) => {
+  const token = authStorage.getToken();
+  if (!token) {
+    return config;
+  }
   config.headers = config.headers ?? {};
-  config.headers[TENANT_HEADER_NAME] = resolveTenantId();
+  config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
+const authClient = axios.create({
+  baseURL: AUTH_API_BASE_URL,
+});
+
+export const authApi = {
+  signup: async (payload: AuthPayload) => {
+    const response = await authClient.post<AuthResponse>('/signup', payload);
+    return response.data;
+  },
+  login: async (payload: AuthPayload) => {
+    const response = await authClient.post<AuthResponse>('/login', payload);
+    return response.data;
+  },
+};
+
 export const noteApi = {
   getAllNotes: async () => {
-    const response = await api.get<Note[]>('');
+    const response = await noteClient.get<Note[]>('');
     return response.data;
   },
   getTrashNotes: async () => {
-    const response = await api.get<Note[]>('/trash');
+    const response = await noteClient.get<Note[]>('/trash');
     return response.data;
   },
   getNoteById: async (id: number) => {
-    const response = await api.get<Note>(`/${id}`);
+    const response = await noteClient.get<Note>(`/${id}`);
     return response.data;
   },
   createNote: async (note: Note) => {
-    const response = await api.post<Note>('', note);
+    const response = await noteClient.post<Note>('', note);
     return response.data;
   },
   updateNote: async (id: number, note: Note) => {
-    const response = await api.put<Note>(`/${id}`, note);
+    const response = await noteClient.put<Note>(`/${id}`, note);
     return response.data;
   },
   softDelete: async (id: number) => {
-    await api.delete(`/${id}`);
+    await noteClient.delete(`/${id}`);
   },
   restoreNote: async (id: number) => {
-    await api.put(`/${id}/restore`);
+    await noteClient.put(`/${id}/restore`);
   },
   hardDelete: async (id: number) => {
-    await api.delete(`/${id}/permanent`);
+    await noteClient.delete(`/${id}/permanent`);
   },
   getNoteHistory: async (id: number) => {
-    const response = await api.get<NoteVersion[]>(`/${id}/history`);
+    const response = await noteClient.get<NoteVersion[]>(`/${id}/history`);
     return response.data;
   },
 };
