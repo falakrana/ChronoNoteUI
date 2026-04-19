@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Moon, Sun } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import NoteCard from './components/NoteCard';
 import NoteEditor from './components/NoteEditor';
@@ -15,6 +15,22 @@ function App() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorInitialTab, setEditorInitialTab] = useState<'edit' | 'diff' | 'history'>('edit');
+  
+  // Theme state
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark';
+  });
+
+  useEffect(() => {
+    if (isDarkTheme) {
+      document.body.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkTheme]);
   
   // Confirmation states
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -126,7 +142,10 @@ function App() {
 
   return (
     <>
-      <Sidebar currentView={view} onViewChange={setView} />
+      <Sidebar 
+        currentView={view} 
+        onViewChange={setView} 
+      />
       
       <main className="main-content">
         <header className="top-bar">
@@ -140,13 +159,21 @@ function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
-          {view === 'notes' && (
-            <button className="btn-primary" onClick={handleCreateNote}>
-              <Plus size={20} />
-              New Note
+          <div className="flex items-center gap-4">
+            <button 
+              className="action-btn" 
+              onClick={() => setIsDarkTheme(!isDarkTheme)} 
+              title={isDarkTheme ? "Light Mode" : "Dark Mode"}
+            >
+              {isDarkTheme ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-          )}
+            {view === 'notes' && (
+              <button className="btn-primary" onClick={handleCreateNote}>
+                <Plus size={20} />
+                New Note
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="notes-grid">

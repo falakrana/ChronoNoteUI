@@ -12,8 +12,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ cursor: 'pointer' }}>
-        <Notebook size={24} color="#6366f1" />
-        {!isCollapsed && <h1>NoteApp</h1>}
+        <Notebook size={24} color="var(--primary)" />
+        {!isCollapsed && <h1>&lt; chronoNote /&gt;</h1>}
       </div>
       
       <nav className="sidebar-nav">
