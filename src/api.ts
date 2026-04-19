@@ -3,9 +3,33 @@ import type { Note, NoteVersion } from './types';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api/notes';
+const TENANT_HEADER_NAME = import.meta.env.VITE_TENANT_HEADER_NAME ?? 'X-Tenant-Id';
+const TENANT_STORAGE_KEY = 'noteapp_tenant_id';
+
+const resolveTenantId = () => {
+  const envTenantId = import.meta.env.VITE_TENANT_ID?.trim();
+  if (envTenantId) {
+    return envTenantId;
+  }
+
+  const savedTenantId = window.localStorage.getItem(TENANT_STORAGE_KEY)?.trim();
+  if (savedTenantId) {
+    return savedTenantId;
+  }
+
+  const generatedTenantId = `tenant-${Math.random().toString(36).slice(2, 10)}`;
+  window.localStorage.setItem(TENANT_STORAGE_KEY, generatedTenantId);
+  return generatedTenantId;
+};
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+});
+
+api.interceptors.request.use((config) => {
+  config.headers = config.headers ?? {};
+  config.headers[TENANT_HEADER_NAME] = resolveTenantId();
+  return config;
 });
 
 export const noteApi = {
