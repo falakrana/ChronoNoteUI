@@ -196,7 +196,7 @@ function App() {
     return (
       <main className="auth-shell">
         {/* Show skeleton overlay during auth submission */}
-        {isAuthSubmitting && <AppSkeleton isDarkTheme={isDarkTheme} />}
+        {isAuthSubmitting && <AppSkeleton />}
         
         <section className="auth-panel animate-fade-in">
           <div className="auth-badge">chronoNote</div>

@@ -14,11 +14,7 @@ import { useEffect, useState } from 'react';
  * - Keyboard focus remains trapped in auth form (overlay is non-interactive)
  */
 
-interface AppSkeletonProps {
-  isDarkTheme?: boolean;
-}
-
-export default function AppSkeleton({ isDarkTheme = false }: AppSkeletonProps) {
+export default function AppSkeleton() {
   const [isVisible, setIsVisible] = useState(false);
 
   // Slight entrance delay for smoothness
