@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import NoteCard from './components/NoteCard';
 import NoteEditor from './components/NoteEditor';
 import ConfirmDialog from './components/ConfirmDialog';
+import AppSkeleton from './components/AppSkeleton';
 import type { Note } from './types';
 import { authApi, authStorage, noteApi } from './api';
 import { AnimatePresence } from 'framer-motion';
@@ -194,6 +195,9 @@ function App() {
   if (!token) {
     return (
       <main className="auth-shell">
+        {/* Show skeleton overlay during auth submission */}
+        {isAuthSubmitting && <AppSkeleton isDarkTheme={isDarkTheme} />}
+        
         <section className="auth-panel animate-fade-in">
           <div className="auth-badge">chronoNote</div>
           <h2 className="auth-title">{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
