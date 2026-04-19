@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Moon, Sun } from 'lucide-react';
+import { Search, Plus, Moon, Sun, Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import NoteCard from './components/NoteCard';
 import NoteEditor from './components/NoteEditor';
@@ -15,6 +15,7 @@ function App() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorInitialTab, setEditorInitialTab] = useState<'edit' | 'diff' | 'history'>('edit');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Theme state
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
@@ -144,12 +145,18 @@ function App() {
     <>
       <Sidebar 
         currentView={view} 
-        onViewChange={setView} 
+        onViewChange={(v) => { setView(v); setIsMobileMenuOpen(false); }} 
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
       
       <main className="main-content">
         <header className="top-bar">
-          <div className="search-container">
+          <div className="flex items-center gap-4 w-full">
+            <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} className="text-main" />
+            </button>
+            <div className="search-container">
             <Search size={18} className="text-muted" />
             <input 
               type="text" 
@@ -158,6 +165,7 @@ function App() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
           </div>
           <div className="flex items-center gap-4">
             <button 

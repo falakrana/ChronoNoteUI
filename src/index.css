@@ -640,44 +640,96 @@ body.dark ::-webkit-scrollbar-thumb:hover {
 .text-primary { color: var(--primary); }
 .text-muted { color: var(--text-muted); }
 
+.mobile-menu-btn, .mobile-close-btn {
+  display: none;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 992px) {
   #root {
-    flex-direction: column-reverse; /* Sidebar moves to bottom navigation */
+    flex-direction: column;
   }
 
-  /* Bottom Navigation */
+  /* Hamburger Menu Toggles */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 12px;
+    background: var(--bg-main);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+  }
+
+  .mobile-menu-btn:hover {
+    background: var(--primary-glow);
+    color: var(--primary);
+  }
+
+  .mobile-close-btn {
+    display: block;
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .mobile-close-btn:hover {
+    background: rgba(244, 63, 94, 0.1);
+    color: var(--accent);
+  }
+
+  /* Sidebar Drawer */
   .sidebar, .sidebar.collapsed {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    padding: 0.8rem 1rem;
-    border-right: none;
-    border-top: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    flex-direction: column;
+    padding: 1.5rem;
     background: var(--bg-sidebar);
-    z-index: 50;
+    border-right: 1px solid var(--border);
+    border-top: none;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
   }
 
   .sidebar-header {
-    display: none; /* Hide header branding on mobile */
+    display: flex !important;
+    margin-bottom: 2rem;
   }
 
   .sidebar-nav {
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: flex-start;
     width: 100%;
-    gap: 0;
+    gap: 0.5rem;
   }
 
   .nav-item {
-    flex-direction: column;
-    padding: 0.6rem;
-    gap: 0.4rem;
-    font-size: 0.75rem;
+    flex-direction: row;
+    padding: 0.8rem 1.2rem;
+    gap: 1rem;
+    font-size: 1rem;
     border-radius: 12px;
   }
 
-  /* Hide collapse toggle */
+  /* Overlay */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+  }
+
+  /* Hide Desktop collapse toggle */
   .collapse-toggle {
     display: none;
   }

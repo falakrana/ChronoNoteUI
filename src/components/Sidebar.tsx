@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
-import { Notebook, Trash2, Home, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Notebook, Trash2, Home, Settings, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface SidebarProps {
   currentView: 'notes' | 'trash';
   onViewChange: (view: 'notes' | 'trash') => void;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, isMobileOpen, onCloseMobile }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="sidebar-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ cursor: 'pointer' }}>
-        <Notebook size={24} color="var(--primary)" />
-        {!isCollapsed && <h1>&lt; chronoNote /&gt;</h1>}
-      </div>
+    <>
+      {isMobileOpen && <div className="sidebar-overlay" onClick={onCloseMobile} />}
+      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="flex items-center gap-2">
+            <Notebook size={24} color="var(--primary)" />
+            {!isCollapsed && <h1>&lt; chronoNote /&gt;</h1>}
+          </div>
+          <button className="mobile-close-btn" onClick={(e) => { e.stopPropagation(); onCloseMobile?.(); }}>
+            <X size={20} className="text-muted" />
+          </button>
+        </div>
       
       <nav className="sidebar-nav">
         <button 
@@ -45,7 +54,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
       >
         {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
-    </aside>
+      </aside>
+    </>
   );
 };
 
