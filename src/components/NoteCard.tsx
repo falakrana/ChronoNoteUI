@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Edit2, RotateCcw, Trash } from 'lucide-react';
+import { Trash2, Edit2, RotateCcw, Trash, History } from 'lucide-react';
 import type { Note } from '../types';
 
 interface NoteCardProps {
@@ -37,6 +37,13 @@ const NoteCard: React.FC<NoteCardProps> = ({
         <div className="note-actions">
           {!isTrash ? (
             <>
+              <button 
+                className="action-btn" 
+                title="View History"
+                onClick={() => onEdit(note)} // It opens the editor where they can switch to History
+              >
+                <History size={16} />
+              </button>
               <button className="action-btn" onClick={() => onEdit(note)}>
                 <Edit2 size={16} />
               </button>
@@ -61,3 +68,4 @@ const NoteCard: React.FC<NoteCardProps> = ({
 };
 
 export default NoteCard;
+

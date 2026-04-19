@@ -9,8 +9,10 @@ export interface Note {
 
 export interface NoteVersion {
   id: number;
-  note: Note;
+  noteId: number;
   title: string;
   content: string;
-  versionedAt: string;
+  versionNumber: number;
+  timestamp: string;
 }
+
