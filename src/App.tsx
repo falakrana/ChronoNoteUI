@@ -3,6 +3,7 @@ import { Search, Plus } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import NoteCard from './components/NoteCard';
 import NoteEditor from './components/NoteEditor';
+import ConfirmDialog from './components/ConfirmDialog';
 import type { Note } from './types';
 import { noteApi } from './api';
 import { AnimatePresence } from 'framer-motion';
@@ -13,6 +14,21 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editorInitialTab, setEditorInitialTab] = useState<'edit' | 'diff' | 'history'>('edit');
+  
+  // Confirmation states
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    isDangerous?: boolean;
+    confirmLabel?: string;
+  }>({
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     fetchNotes();
@@ -29,11 +45,19 @@ function App() {
 
   const handleCreateNote = () => {
     setEditingNote(null);
+    setEditorInitialTab('edit');
     setIsEditorOpen(true);
   };
 
   const handleEditNote = (note: Note) => {
     setEditingNote(note);
+    setEditorInitialTab('edit');
+    setIsEditorOpen(true);
+  };
+
+  const handleViewHistory = (note: Note) => {
+    setEditingNote(note);
+    setEditorInitialTab('history');
     setIsEditorOpen(true);
   };
 
@@ -51,13 +75,20 @@ function App() {
     }
   };
 
-  const handleDeleteNote = async (id: number) => {
-    try {
-      await noteApi.softDelete(id);
-      fetchNotes();
-    } catch (error) {
-      console.error('Failed to delete note:', error);
-    }
+  const handleDeleteNote = (note: Note) => {
+    setConfirmConfig({
+      title: 'Move to Trash?',
+      message: 'This note will be moved to the trash. You can restore it later.',
+      confirmLabel: 'Move to Trash',
+      onConfirm: async () => {
+        if (note.id) {
+          await noteApi.softDelete(note.id);
+          fetchNotes();
+          setIsConfirmOpen(false);
+        }
+      }
+    });
+    setIsConfirmOpen(true);
   };
 
   const handleRestoreNote = async (id: number) => {
@@ -69,15 +100,21 @@ function App() {
     }
   };
 
-  const handlePermanentDelete = async (id: number) => {
-    if (confirm('Are you sure you want to permanently delete this note?')) {
-      try {
-        await noteApi.hardDelete(id);
-        fetchNotes();
-      } catch (error) {
-        console.error('Failed to permanently delete note:', error);
+  const handlePermanentDelete = (note: Note) => {
+    setConfirmConfig({
+      title: 'Delete Permanently?',
+      message: 'This action cannot be undone. All history for this note will be lost.',
+      confirmLabel: 'Delete Forever',
+      isDangerous: true,
+      onConfirm: async () => {
+        if (note.id) {
+          await noteApi.hardDelete(note.id);
+          fetchNotes();
+          setIsConfirmOpen(false);
+        }
       }
-    }
+    });
+    setIsConfirmOpen(true);
   };
 
   const filteredNotes = notes.filter((note) => {
@@ -119,6 +156,7 @@ function App() {
               note={note} 
               isTrash={view === 'trash'}
               onEdit={handleEditNote}
+              onViewHistory={handleViewHistory}
               onDelete={handleDeleteNote}
               onRestore={handleRestoreNote}
               onPermanentDelete={handlePermanentDelete}
@@ -144,11 +182,23 @@ function App() {
             note={editingNote} 
             onSave={handleSaveNote} 
             onClose={() => setIsEditorOpen(false)} 
+            initialTab={editorInitialTab}
           />
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmLabel={confirmConfig.confirmLabel}
+        isDangerous={confirmConfig.isDangerous}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </>
   );
 }
+
 
 export default App;

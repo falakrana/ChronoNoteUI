@@ -6,19 +6,22 @@ interface NoteCardProps {
   note: Note;
   isTrash?: boolean;
   onEdit: (note: Note) => void;
-  onDelete: (id: number) => void;
+  onViewHistory: (note: Note) => void;
+  onDelete: (note: Note) => void;
   onRestore?: (id: number) => void;
-  onPermanentDelete?: (id: number) => void;
+  onPermanentDelete?: (note: Note) => void;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ 
   note, 
   isTrash, 
   onEdit, 
+  onViewHistory,
   onDelete, 
   onRestore, 
   onPermanentDelete 
 }) => {
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -40,14 +43,14 @@ const NoteCard: React.FC<NoteCardProps> = ({
               <button 
                 className="action-btn" 
                 title="View History"
-                onClick={() => onEdit(note)} // It opens the editor where they can switch to History
+                onClick={() => onViewHistory(note)}
               >
                 <History size={16} />
               </button>
               <button className="action-btn" onClick={() => onEdit(note)}>
                 <Edit2 size={16} />
               </button>
-              <button className="action-btn delete" onClick={() => note.id && onDelete(note.id)}>
+              <button className="action-btn delete" onClick={() => onDelete(note)}>
                 <Trash2 size={16} />
               </button>
             </>
@@ -56,9 +59,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
               <button className="action-btn" onClick={() => note.id && onRestore?.(note.id)}>
                 <RotateCcw size={16} />
               </button>
-              <button className="action-btn delete" onClick={() => note.id && onPermanentDelete?.(note.id)}>
+              <button className="action-btn delete" onClick={() => onPermanentDelete?.(note)}>
                 <Trash size={16} />
               </button>
+
             </>
           )}
         </div>

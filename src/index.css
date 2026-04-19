@@ -506,5 +506,21 @@ input, textarea {
 .mb-2 { margin-bottom: 0.5rem; }
 .text-sm { font-size: 0.875rem; }
 .font-semibold { font-weight: 600; }
+.text-accent { color: var(--accent); }
+.text-primary { color: var(--primary); }
+
+.btn-danger {
+  background-color: var(--accent);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.btn-danger:hover {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
 
 

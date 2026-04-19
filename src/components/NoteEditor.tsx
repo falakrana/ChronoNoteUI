@@ -9,12 +9,14 @@ interface NoteEditorProps {
   note: Note | null;
   onSave: (note: Note) => void;
   onClose: () => void;
+  initialTab?: 'edit' | 'diff' | 'history';
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialTab = 'edit' }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [activeTab, setActiveTab] = useState<'edit' | 'diff' | 'history'>('edit');
+  const [activeTab, setActiveTab] = useState<'edit' | 'diff' | 'history'>(initialTab);
+
   const [history, setHistory] = useState<NoteVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<NoteVersion | null>(null);
 
