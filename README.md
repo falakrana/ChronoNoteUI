@@ -4,10 +4,14 @@ A modern, responsive frontend for the Versioned Notes API built with React, Type
 
 ## 🚀 Features
 
-- **Note Management**: Create, read, update, and delete (soft/hard) notes.
-- **Trash Functionality**: View deleted notes, restore them, or permanently delete them.
-- **Version History**: Track and view previous versions of any note.
-- **Modern UI**: Clean and intuitive user interface built with customized CSS and components.
+- **Authentication**: Secure signup and login system with persistent session management.
+- **Note Management**: Create, read, update, and delete (soft/hard) notes with confirmation workflows.
+- **Trash Functionality**: View deleted notes, restore them, or permanently delete them with safety checks.
+- **Version History**: Track and view previous versions of any note with built-in diff viewing.
+- **Modern UI**: Clean, interactive interface featuring:
+  - **Dynamic Themes**: Seamless Dark and Light mode support.
+  - **Mobile Responsive**: Fully optimized for mobile with a hamburger menu navigation.
+  - **Micro-animations**: Smooth transitions using Framer Motion.
 
 ## 🛠️ Tech Stack
 
@@ -36,7 +40,8 @@ The app will be available at `http://localhost:5173`.
 
 ## 📂 Project Structure
 
-- `src/components`: Reusable UI components.
-- `src/api.ts`: API integration with the Spring Boot backend.
-- `src/types.ts`: TypeScript interfaces for the Note models.
-- `src/index.css`: Global styles and design system.
+- `src/components`: Reusable UI components (Sidebar, NoteCard, Editor, etc.).
+- `src/api.ts`: API integration for notes and authentication.
+- `src/types.ts`: TypeScript interfaces for core data models.
+- `src/index.css`: Comprehensive design system with dark mode tokens.
+- `src/App.tsx`: Central application shell and state management.
