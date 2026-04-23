@@ -4,6 +4,7 @@ import type { Note } from '../types';
 
 interface NoteCardProps {
   note: Note;
+  folderName?: string;
   isTrash?: boolean;
   onEdit: (note: Note) => void;
   onViewHistory: (note: Note) => void;
@@ -14,6 +15,7 @@ interface NoteCardProps {
 
 const NoteCard: React.FC<NoteCardProps> = ({ 
   note, 
+  folderName,
   isTrash, 
   onEdit, 
   onViewHistory,
@@ -33,7 +35,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
   return (
     <div className="note-card animate-fade-in">
-      <h3 className="note-title">{note.title || 'Untitled'}</h3>
+      <h3 className="note-title" title={note.title || 'Untitled'}>{note.title || 'Untitled'}</h3>
+      {folderName && <div className="note-date">Folder: {folderName}</div>}
       <div className="note-content">{note.content}</div>
       <div className="note-footer">
         <span className="note-date">{formatDate(note.updatedAt || note.createdAt)}</span>
@@ -72,4 +75,3 @@ const NoteCard: React.FC<NoteCardProps> = ({
 };
 
 export default NoteCard;
-

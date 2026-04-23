@@ -124,6 +124,8 @@ input, textarea {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 }
 
 .nav-item {
@@ -154,6 +156,265 @@ input, textarea {
 .nav-item.active {
   background-color: var(--primary-glow);
   box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+.folder-tree-section {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.8rem;
+}
+
+.folder-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.25rem 0.5rem 0.25rem;
+}
+
+.folder-tree-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.folder-tree-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.folder-tree-header-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.folder-tree-header-btn:hover {
+  background: var(--primary-glow);
+  color: var(--primary);
+}
+
+.folder-tree-item {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
+}
+
+.folder-tree-item:hover,
+.folder-tree-item.selected {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+body.dark .folder-tree-item:hover,
+body.dark .folder-tree-item.selected {
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.folder-tree-chevron,
+.folder-tree-chevron-placeholder {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.folder-tree-chevron:hover {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.folder-tree-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.folder-tree-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-tree-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  padding-right: 0.2rem;
+}
+
+.folder-tree-item:hover .folder-tree-actions {
+  opacity: 1;
+}
+
+.folder-note-row:hover .folder-tree-actions {
+  opacity: 1;
+}
+
+.folder-tree-action {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-tree-action:hover {
+  background: var(--primary-glow);
+  color: var(--primary);
+}
+
+.folder-tree-action.delete:hover {
+  color: var(--accent);
+  background-color: rgba(244, 63, 94, 0.15);
+}
+
+.folder-inline-editor {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.25rem 0.3rem 1.75rem;
+}
+
+.folder-inline-input {
+  width: 100%;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  border-radius: 7px;
+  color: var(--text-main);
+  padding: 0 0.45rem;
+  font-size: 0.86rem;
+}
+
+.folder-inline-input:focus {
+  border-color: var(--primary);
+}
+
+.folder-inline-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-inline-btn:hover {
+  background: var(--primary-glow);
+  color: var(--primary);
+}
+
+.folder-inline-btn.danger:hover {
+  color: var(--accent);
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.folder-note-row {
+  width: 100%;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  padding: 0 0.45rem;
+  margin: 0.08rem 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folder-note-row:hover {
+  background: rgba(148, 163, 184, 0.18);
+  color: var(--text-main);
+}
+
+body.dark .folder-note-row:hover {
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.folder-note-row span {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-note-row.root {
+  padding-left: 0.6rem;
+}
+
+/* Note rows with inline action buttons */
+.folder-note-row--actions {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0;
+  height: 26px;
+}
+
+.folder-note-row-main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  padding: 0 0.45rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.folder-note-row--actions:hover .folder-note-row-main {
+  color: var(--text-main);
+}
+
+.folder-note-row-main span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-note-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  padding-right: 0.2rem;
+  flex-shrink: 0;
+}
+
+.folder-note-row--actions:hover .folder-note-row-actions {
+  opacity: 1;
 }
 
 .collapse-toggle {
@@ -276,6 +537,29 @@ input, textarea {
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), var(--blue-aura);
 }
 
+.folder-card {
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(37, 99, 235, 0.03) 100%);
+}
+
+.folder-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.folder-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--primary-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
 .note-title {
   font-size: 1.5rem;
   font-weight: 700;
@@ -390,6 +674,35 @@ input, textarea {
   flex-direction: column;
   gap: 2rem;
   overflow-y: auto;
+}
+
+.editor-folder-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editor-folder-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.editor-folder-select {
+  height: 44px;
+  border: 1px solid var(--border);
+  background: var(--bg-main);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 0 0.8rem;
+  font-size: 0.95rem;
+}
+
+.editor-folder-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow) !important;
 }
 
 .editor-title-input {

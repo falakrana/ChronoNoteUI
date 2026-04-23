@@ -1,10 +1,12 @@
 import axios from 'axios';
-import type { AuthPayload, AuthResponse, Note, NoteVersion } from './types';
+import type { AuthPayload, AuthResponse, Folder, Note, NoteVersion } from './types';
 
 const NOTES_API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api/notes';
 const AUTH_API_BASE_URL =
   import.meta.env.VITE_AUTH_API_BASE_URL ?? 'http://localhost:8080/api/auth';
+const FOLDERS_API_BASE_URL =
+  import.meta.env.VITE_FOLDERS_API_BASE_URL ?? 'http://localhost:8080/api/folders';
 const AUTH_TOKEN_STORAGE_KEY = 'noteapp_auth_token';
 
 export const authStorage = {
@@ -31,6 +33,20 @@ const authClient = axios.create({
   baseURL: AUTH_API_BASE_URL,
 });
 
+const folderClient = axios.create({
+  baseURL: FOLDERS_API_BASE_URL,
+});
+
+folderClient.interceptors.request.use((config) => {
+  const token = authStorage.getToken();
+  if (!token) {
+    return config;
+  }
+  config.headers = config.headers ?? {};
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 export const authApi = {
   signup: async (payload: AuthPayload) => {
     const response = await authClient.post<AuthResponse>('/signup', payload);
@@ -43,8 +59,8 @@ export const authApi = {
 };
 
 export const noteApi = {
-  getAllNotes: async () => {
-    const response = await noteClient.get<Note[]>('');
+  getAllNotes: async (params?: { folderId?: number; rootOnly?: boolean }) => {
+    const response = await noteClient.get<Note[]>('', { params });
     return response.data;
   },
   getTrashNotes: async () => {
@@ -75,5 +91,33 @@ export const noteApi = {
   getNoteHistory: async (id: number) => {
     const response = await noteClient.get<NoteVersion[]>(`/${id}/history`);
     return response.data;
+  },
+};
+
+export const folderApi = {
+  getAllFolders: async () => {
+    const response = await folderClient.get<Folder[]>('');
+    return response.data;
+  },
+  createFolder: async (folder: Pick<Folder, 'name' | 'parentFolderId'>) => {
+    const response = await folderClient.post<Folder>('', folder);
+    return response.data;
+  },
+  updateFolder: async (id: number, folder: Pick<Folder, 'name' | 'parentFolderId'>) => {
+    const response = await folderClient.put<Folder>(`/${id}`, folder);
+    return response.data;
+  },
+  deleteFolder: async (id: number) => {
+    await folderClient.delete(`/${id}`);
+  },
+  getTrashFolders: async () => {
+    const response = await folderClient.get<Folder[]>('/trash');
+    return response.data;
+  },
+  restoreFolder: async (id: number) => {
+    await folderClient.put(`/${id}/restore`);
+  },
+  hardDeleteFolder: async (id: number) => {
+    await folderClient.delete(`/${id}/permanent`);
   },
 };

@@ -2,9 +2,19 @@ export interface Note {
   id?: number;
   title: string;
   content: string;
+  folderId?: number | null;
   createdAt?: string;
   updatedAt?: string;
   deleted?: boolean;
+}
+
+export interface Folder {
+  id?: number;
+  name: string;
+  parentFolderId?: number | null;
+  tenantId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface NoteVersion {

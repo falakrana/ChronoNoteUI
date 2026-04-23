@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, History, FileText, GitBranch, CheckCircle } from 'lucide-react';
-import type { Note, NoteVersion } from '../types';
+import type { Folder, Note, NoteVersion } from '../types';
 import { motion } from 'framer-motion';
 import { noteApi } from '../api';
 import DiffViewer from './DiffViewer';
 
 interface NoteEditorProps {
   note: Note | null;
+  folders: Folder[];
+  defaultFolderId?: number | null;
   onSave: (note: Note) => void;
   onClose: () => void;
   initialTab?: 'edit' | 'diff' | 'history';
 }
 
-const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialTab = 'edit' }) => {
+const NoteEditor: React.FC<NoteEditorProps> = ({
+  note,
+  folders,
+  defaultFolderId = null,
+  onSave,
+  onClose,
+  initialTab = 'edit'
+}) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [folderId, setFolderId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'edit' | 'diff' | 'history'>(initialTab);
 
   const [history, setHistory] = useState<NoteVersion[]>([]);
@@ -24,15 +34,17 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialT
     if (note) {
       setTitle(note.title);
       setContent(note.content);
+      setFolderId(note.folderId ?? null);
       if (note.id) {
         fetchHistory(note.id);
       }
     } else {
       setTitle('');
       setContent('');
+      setFolderId(defaultFolderId ?? null);
       setHistory([]);
     }
-  }, [note]);
+  }, [note, defaultFolderId]);
 
   const fetchHistory = async (id: number) => {
     try {
@@ -48,6 +60,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialT
       ...(note ?? {}),
       title,
       content,
+      folderId,
     });
   };
 
@@ -98,6 +111,24 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialT
 
           {activeTab === 'edit' && (
             <>
+              <div className="editor-folder-row">
+                <label className="editor-folder-label" htmlFor="folder-select">Folder</label>
+                <select
+                  id="folder-select"
+                  className="editor-folder-select"
+                  value={folderId ?? ''}
+                  onChange={(e) => setFolderId(e.target.value ? Number(e.target.value) : null)}
+                >
+                  <option value="">Root (No Folder)</option>
+                  {folders
+                    .filter((folder) => folder.id !== undefined)
+                    .map((folder) => (
+                      <option key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
               <input
                 type="text"
                 className="editor-title-input"
@@ -166,4 +197,3 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose, initialT
 };
 
 export default NoteEditor;
-
