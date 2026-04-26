@@ -119,7 +119,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
                   value={folderId ?? ''}
                   onChange={(e) => setFolderId(e.target.value ? Number(e.target.value) : null)}
                 >
-                  <option value="">Root (No Folder)</option>
+                  <option value="">Root Folder</option>
                   {folders
                     .filter((folder) => folder.id !== undefined)
                     .map((folder) => (

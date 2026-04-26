@@ -120,7 +120,12 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
     authStorage.clearToken();
     setToken(null);
     setEditingNote(null);

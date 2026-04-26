@@ -11,40 +11,23 @@ const AUTH_TOKEN_STORAGE_KEY = 'noteapp_auth_token';
 
 export const authStorage = {
   getToken: () => window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY),
-  setToken: (token: string) => window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token),
+  setToken: () => window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, 'true'), // Store a dummy value to keep login state across reloads
   clearToken: () => window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY),
 };
 
 const noteClient = axios.create({
   baseURL: NOTES_API_BASE_URL,
-});
-
-noteClient.interceptors.request.use((config) => {
-  const token = authStorage.getToken();
-  if (!token) {
-    return config;
-  }
-  config.headers = config.headers ?? {};
-  config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  withCredentials: true,
 });
 
 const authClient = axios.create({
   baseURL: AUTH_API_BASE_URL,
+  withCredentials: true,
 });
 
 const folderClient = axios.create({
   baseURL: FOLDERS_API_BASE_URL,
-});
-
-folderClient.interceptors.request.use((config) => {
-  const token = authStorage.getToken();
-  if (!token) {
-    return config;
-  }
-  config.headers = config.headers ?? {};
-  config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  withCredentials: true,
 });
 
 export const authApi = {
@@ -56,6 +39,9 @@ export const authApi = {
     const response = await authClient.post<AuthResponse>('/login', payload);
     return response.data;
   },
+  logout: async () => {
+    await authClient.post('/logout');
+  }
 };
 
 export const noteApi = {
